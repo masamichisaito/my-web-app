@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ユーザー一覧</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/c15dba52a2.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <h1>登録ユーザー一覧</h1>
+
+  <ul>
+    <% if (users.length === 0) { %>
+      <li>まだ登録されていません</li>
+    <% } else { %>
+      <% users.forEach(user => { %>
+        <li>
+          <%= user.name %>（<%= user.age %>歳）
+          <!-- ↓↓↓ ここが重要 ↓↓↓ -->
+          <a href="/users/<%= user.id %>/delete" class="delete-link" onclick="return confirm('本当に削除しますか？');">
+            <i class="fas fa-trash-alt"></i> 削除
+          </a>
+        </li>
+      <% }); %>
+    <% } %>
+  </ul>
+
+  <a href="/">← フォームに戻る</a>
+</body>
+</html>

@@ -1,0 +1,140 @@
+/* 共通設定 */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Helvetica Neue", sans-serif;
+  background-color: #eef2f7;
+  padding: 2em;
+  margin: 0;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 1.5em;
+  transition: transform 0.3s;
+}
+
+h1:hover {
+  transform: scale(1.03);
+}
+
+form {
+  background: #ffffff;
+  padding: 2em;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 2em;
+  text-align: left;
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+label {
+  display: block;
+  margin-top: 1em;
+  font-weight: bold;
+}
+
+input, button {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.3em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: box-shadow 0.3s;
+}
+
+input:focus {
+  box-shadow: 0 0 5px #007bff;
+  outline: none;
+}
+
+button {
+  margin-top: 1.5em;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+li {
+  background: #ffffff;
+  margin-bottom: 1em;
+  padding: 1em 1.5em;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeIn 0.5s ease-in-out;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+li:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+a.delete-link {
+  color: #dc3545;
+  text-decoration: none;
+  font-weight: bold;
+  border: 1px solid #dc3545;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+a.delete-link:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* アニメーションのキーフレーム */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* アニメーションを適用するク
+::contentReference[oaicite:2]{index=2}
+ 

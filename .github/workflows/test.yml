@@ -22,5 +22,17 @@ jobs:
       - name: 依存関係インストール
         run: npm install
 
-      - name: カバレッジ付きでテスト実行
+      - name: ユニットテスト（カバレッジ付き）
         run: npm test -- --coverage
+
+      - name: サーバー起動
+        run: npm start &
+        
+      - name: サーバーが立ち上がるのを待つ
+        run: npx wait-on http://localhost:3000
+
+      - name: E2Eテストの実行
+        run: npm run test:e2e
+
+      - name: カバレッジレポートの生成
+        run: npm run coverage:report
