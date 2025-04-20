@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>バトル</title>
+  <!-- Bootstrap CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-5 text-center">
+
+  <!-- バトルログ -->
+  <% if (session.log) { %>
+    <p class="alert alert-info"><%= session.log %></p>
+  <% } %>
+
+  <!-- キャラ表示：勇者 vs 敵 -->
+  <div class="d-flex justify-content-around align-items-start mb-5">
+
+    <!-- 勇者 -->
+    <div class="text-center">
+      <img src="/img/hero.png" alt="勇者" style="height: 150px;">
+      <h4 class="mt-2"><%= hero.name %></h4>
+      <p>HP: <%= hero.hp %> / 30</p>
+      <div class="progress" style="height: 20px; width: 150px; margin: auto;">
+        <div class="progress-bar bg-success" role="progressbar" style="width: <%= (hero.hp / 30) * 100 %>%"></div>
+      </div>
+    </div>
+
+    <!-- 敵 -->
+    <div class="text-center">
+      <img src="<%= enemy.img %>" alt="<%= enemy.name %>" style="height: 150px;">
+      <h4 class="mt-2"><%= enemy.name %></h4>
+      <p>HP: <%= enemy.hp %> / <%= enemy.maxHp %></p>
+      <div class="progress" style="height: 20px; width: 150px; margin: auto;">
+        <div class="progress-bar bg-danger" role="progressbar" style="width: <%= (enemy.hp / enemy.maxHp) * 100 %>%"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 攻撃ボタン -->
+  <form action="/rpg/attack" method="post" class="mb-4">
+    <button type="submit" class="btn btn-primary">攻撃！</button>
+  </form>
+
+  <!-- トップへ戻る -->
+  <p><a href="/" class="btn btn-secondary">トップページへ戻る</a></p>
+
+  <div class="mt-4 text-start">
+    <h5>戦闘ログ</h5>
+    <ul class="list-group">
+      <% session.logs?.forEach(log => { %>
+        <li class="list-group-item"><%= log %></li>
+      <% }) %>
+    </ul>
+  </div>
+
+</body>
+</html>

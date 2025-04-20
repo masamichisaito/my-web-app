@@ -2,54 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title><%= title %></title>
+  <title>トップページ</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 外部CSS -->
   <link rel="stylesheet" href="/css/style.css">
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/c15dba52a2.js" crossorigin="anonymous"></script>
-</head>
-<body>
-  <div class="fade-in-up scroll-animation">
-    <h2>ユーザー登録フォーム</h2>
-  </div>
+</head> 
+  <body>
+    <h1>ようこそ！</h1>
+    <form action="/form" method="get">
+      <button type="submit">名前と年齢を入力する</button>
+    </form>
 
-  <% if (errors && errors.length > 0) { %>
-    <div class="error-messages">
-      <ul>
-        <% errors.forEach(error => { %>
-          <li><%= error %></li>
-        <% }) %>
-      </ul>
-    </div>
-  <% } %>
+    <br>
 
-  <form action="/users" method="POST">
-    <label for="name"><i class="fas fa-user"></i> 名前：</label>
-    <input type="text" id="name" name="name" value="<%= previous?.name || '' %>" required>
-
-    <label for="age"><i class="fas fa-birthday-cake"></i> 年齢：</label>
-    <input type="number" id="age" name="age" value="<%= previous?.age || '' %>" required>
-
-    <button type="submit"><i class="fas fa-paper-plane"></i> 送信</button>
+  <!-- ここにRPGへのリンクボタンを追加 -->
+  <form action="/rpg/start" method="get">
+    <button type="submit">🧙 RPGを遊ぶ</button>
   </form>
-
-  <!-- JavaScriptコード -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const elements = document.querySelectorAll('.scroll-animation');
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-up');
-            observer.unobserve(entry.target);
-          }
-        });
-      });
-
-      elements.forEach(el => observer.observe(el));
-    });
-  </script>
+  
 </body>
 </html>

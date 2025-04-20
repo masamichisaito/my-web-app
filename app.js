@@ -1,21 +1,48 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 const app = express();
+
 const users = [];
-let userId = 1; // ユーザーIDを自動付与するためのカウンター
+let userId = 1;
 
-// ミドルウェア
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
-// EJSテンプレート設定
+// セッションミドルウェアの設定
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // テスト環境では false に設定
+}));
+
+app.post('/rpg/test/setup', (req, res) => {
+  const { monsterHP, heroHP } = req.body;
+  if (monsterHP !== undefined) {
+    req.session.monsterHP = monsterHP;
+  }
+  if (heroHP !== undefined) {
+    req.session.heroHP = heroHP;
+  }
+  res.status(200).send('Setup complete');
+});
+
+
+// EJSでセッション使えるように
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
+
+// テンプレート設定
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // 静的ファイル
 app.use(express.static(path.join(__dirname, 'public')));
 
-// トップページ（フォーム）
+// トップページ
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'ホームページ',
@@ -25,12 +52,20 @@ app.get('/', (req, res) => {
   });
 });
 
-// ユーザー登録処理（POST）
+// 入力フォーム
+app.get('/form', (req, res) => {
+  res.render('form', {
+    title: 'ユーザー登録フォーム',
+    errors: [],
+    previous: {}
+  });
+});
+
+// ユーザー登録
 app.post('/users', (req, res) => {
   const { name, age } = req.body;
   const errors = [];
 
-  // 名前のバリデーション
   if (!name) {
     errors.push('名前は必須です');
   } else if (name.length > 255) {
@@ -39,7 +74,6 @@ app.post('/users', (req, res) => {
     errors.push('名前に無効な文字が含まれています');
   }
 
-  // 年齢のバリデーション
   const ageNumber = Number(age);
   if (!age) {
     errors.push('年齢は必須です');
@@ -64,26 +98,33 @@ app.post('/users', (req, res) => {
   res.redirect('/users');
 });
 
-
-// ✅ ユーザー一覧表示（GET /users）← これが抜けていた！
+// ユーザー一覧
 app.get('/users', (req, res) => {
   res.render('users', { users });
 });
 
-// ユーザー削除（GET /users/:id/delete）
+// ユーザー削除
 app.get('/users/:id/delete', (req, res) => {
   const userIdToDelete = parseInt(req.params.id, 10);
-
   const index = users.findIndex(user => user.id === userIdToDelete);
 
   if (index === -1) {
     console.log(`⚠️ ID ${userIdToDelete} のユーザーが見つかりませんでした`);
   } else {
     console.log(`🗑️ ID ${userIdToDelete} のユーザーを削除しました`);
-    users.splice(index, 1); // 該当ユーザーを削除
+    users.splice(index, 1);
   }
 
   res.redirect('/users');
+});
+
+// RPGルーティング読み込み
+const rpgRoutes = require('./routes/rpg');
+app.use('/rpg', rpgRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
 
 module.exports = app;

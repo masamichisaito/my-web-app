@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 外部CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Font Awesome -->
+  <script src="https://kit.fontawesome.com/c15dba52a2.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="fade-in-up scroll-animation">
+    <h2>ユーザー登録フォーム</h2>
+  </div>
+
+  <% if (errors && errors.length > 0) { %>
+    <div class="error-messages">
+      <ul>
+        <% errors.forEach(error => { %>
+          <li><%= error %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form action="/users" method="POST" class="w-50 mx-auto mt-4">
+    <div class="mb-3">
+      <label for="name" class="form-label"><i class="fas fa-user"></i> 名前：</label>
+      <input type="text" id="name" name="name" class="form-control" value="<%= previous?.name || '' %>" required>
+    </div>
+  
+    <div class="mb-3">
+      <label for="age" class="form-label"><i class="fas fa-birthday-cake"></i> 年齢：</label>
+      <input type="number" id="age" name="age" class="form-control" value="<%= previous?.age || '' %>" required>
+    </div>
+  
+    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> 送信</button>
+  </form>
+
+  <!-- JavaScriptコード -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const elements = document.querySelectorAll('.scroll-animation');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('fade-in-up');
+            observer.unobserve(entry.target);
+          }
+        });
+      });
+
+      elements.forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
