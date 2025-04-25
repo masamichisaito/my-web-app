@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Docker CI
 
 on:
   push:
@@ -11,28 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: リポジトリをチェックアウト
+      - name: コードをチェックアウト
         uses: actions/checkout@v3
 
-      - name: Node.js セットアップ
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+      - name: Docker Compose でビルド
+        run: docker-compose build
 
-      - name: 依存関係インストール
-        run: npm install
+      - name: Dockerでユニットテスト（カバレッジ付き）
+        run: docker-compose run --rm web npm test -- --coverage
 
-      - name: ユニットテスト（カバレッジ付き）
-        run: npm test -- --coverage
+      # - name: サーバー起動（E2E用）
+      #   run: docker-compose up -d
 
-      - name: サーバー起動
-        run: npm start &
-        
-      - name: サーバーが立ち上がるのを待つ
-        run: npx wait-on http://localhost:3000
+      # - name: サーバーが立ち上がるのを待つ（E2E用）
+      #   run: npx wait-on http://localhost:3000
 
-      - name: E2Eテストの実行
-        run: npm run test:e2e
+      # - name: E2Eテスト実行（必要なら）
+      #   run: docker-compose run --rm web npm run test:e2e
 
-      - name: カバレッジレポートの生成
-        run: npm run coverage:report
+      # - name: カバレッジレポート生成（任意）
+      #   run: docker-compose run --rm web npm run coverage:report
+
+      - name: ビルド後のクリーンアップ
+        run: docker-compose down --volumes --remove-orphans

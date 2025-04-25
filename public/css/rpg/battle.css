@@ -1,0 +1,53 @@
+body {
+  background-color: #000; /* バトル中は背景色を落としても◎ */
+}
+
+.battle-field {
+    position: relative;
+    width: 100%;
+    height: 500px; /* 必要に応じて高さを調整 */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-image:  url('/img/rpg/battle-background.png'); /* 背景画像のパス */
+  background-size: cover; /* 画面全体をカバー */
+  background-position: center bottom; /* 下部中央に配置 */
+  background-repeat: no-repeat; /* 繰り返しなし */
+}
+
+/* キャラ画像を少し浮かせて調整 */
+.battle-field img {
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 2px #333);
+}
+
+.hero-right {
+  transform: scaleX(-1);
+}
+
+.enemy, .hero {
+  position: absolute;
+  bottom: 20px; /* 下からの距離を設定（必要に応じて調整） */
+}
+
+.enemy {
+  left: 150px; /* 左からの距離を設定 */
+}
+
+.hero {
+  right: 150px; /* 右からの距離を設定 */
+}
+
+.character-img {
+  height: 150px;
+  margin-bottom: 0; /* 下部にぴったり配置 */
+}

@@ -1,151 +1,130 @@
+// ✅ ログ付き完全版 rpg.js（noEncounter対策＆動作確認用ログ付き）
 const express = require('express');
 const router = express.Router();
 
-// GET /rpg/start（勇者の名前入力）
-router.get('/start', (req, res) => {
-  res.render('rpg/start', {
-    title: 'RPG開始',
-    error: null
-  });
+router.get('/check-no-encounter', (req, res) => {
+  const skip = !!req.session.noEncounter;
+  console.log('🧪 /rpg/check-no-encounter:', skip);
+  req.session.noEncounter = false;
+  res.json({ noEncounter: skip });
 });
 
-// POST /rpg/start（勇者登録処理）
+router.get('/start', (req, res) => {
+  console.log('📥 GET /start');
+  req.session.log = null;
+  req.session.logs = [];
+  res.render('rpg/start', { title: 'RPG開始', error: null });
+});
+
 router.post('/start', (req, res) => {
   const { heroName } = req.body;
-
+  console.log('📤 POST /start:', heroName);
   if (!heroName || heroName.trim() === '') {
-    return res.render('rpg/start', {
-      title: 'RPG開始',
-      error: '名前は必須です'
-    });
+    return res.render('rpg/start', { title: 'RPG開始', error: '名前は必須です' });
   }
-
- // すでに勇者が存在していればスキップ（再出撃モード）
-if (!req.session.hero) {
-  req.session.hero = {
-    name: heroName,
-    hp: 30
-  };
-}
-
-  // 敵＆ログもクリアしておく
+  req.session.hero = { name: heroName, hp: 30 };
   req.session.enemy = null;
   req.session.log = null;
-  req.session.logs = []; // ←ログ履歴を初期化
-
-  res.redirect('/rpg/battle');
+  req.session.logs = [];
+  res.redirect('/rpg/map');
 });
 
-// GET /rpg/battle（バトル画面）
-router.get('/battle', (req, res) => {
-  if (!req.session.hero) {
+router.get('/map', (req, res) => {
+  const hero = req.session.hero;
+  if (!hero) {
+    console.warn('⚠️ heroが存在しません。セッション切れの可能性');
     return res.redirect('/rpg/start');
   }
+  console.log('🗺️ /map accessed with hero:', hero);
+  res.render('rpg/map', { hero });
+});
 
-  // テスト用のHP指定があれば反映（勇者）
-  if (req.session.heroHP !== undefined) {
-    req.session.hero.hp = req.session.heroHP;
-  }
+router.get('/battle', (req, res) => {
+  if (!req.session.hero) return res.redirect('/rpg/start');
 
-  // 敵が未登録ならランダムで生成
   if (!req.session.enemy) {
     const enemies = [
-      { name: 'スライム', maxHp: 20, img: '/img/slime.png' },
-      { name: 'ゴブリン', maxHp: 25, img: '/img/goblin.png' },
-      { name: 'コウモリ', maxHp: 28, img: '/img/bat.png' }
+      { name: 'スライム', maxHp: 20, img: '/img/rpg/slime.png' },
+      { name: 'ゴブリン', maxHp: 25, img: '/img/rpg/goblin.png' },
+      { name: 'コウモリ', maxHp: 28, img: '/img/rpg/bat.png' }
     ];
-
-    const selectedEnemy = enemies[Math.floor(Math.random() * enemies.length)];
-
-    // テスト用のmonsterHPがあればそれを使用
-    const initialHP = req.session.monsterHP ?? selectedEnemy.maxHp;
-
+    const selected = enemies[Math.floor(Math.random() * enemies.length)];
     req.session.enemy = {
-      name: selectedEnemy.name,
-      maxHp: selectedEnemy.maxHp,
-      hp: initialHP,
-      img: selectedEnemy.img
+      name: selected.name,
+      maxHp: selected.maxHp,
+      hp: req.session.monsterHP ?? selected.maxHp,
+      img: selected.img
     };
-
-    req.session.log = `${selectedEnemy.name} が現れた！！`;
+    req.session.log = `${selected.name} が現れた！！`;
   }
 
-  console.log('敵情報（セッション）:', req.session.enemy);
-
+  console.log('⚔️ /battle: enemy =', req.session.enemy);
   res.render('rpg/battle', {
     hero: req.session.hero,
     enemy: req.session.enemy
   });
 });
 
-// POST /rpg/attack（勇者の攻撃処理）
 router.post('/attack', (req, res) => {
   const hero = req.session.hero;
   const enemy = req.session.enemy;
+  if (!hero || !enemy) return res.redirect('/rpg/start');
 
-  if (!hero || !enemy) {
-    return res.redirect('/rpg/start');
-  }
-
-  // 勇者の攻撃：3〜6ダメージ
   const heroDamage = Math.floor(Math.random() * 4) + 3;
-  enemy.hp -= heroDamage;
+  enemy.hp = Math.max(enemy.hp - heroDamage, 0);
+  console.log(`🗡️ 勇者の攻撃: ${heroDamage} ダメージ (残HP: ${enemy.hp})`);
 
-  let log = `勇者 ${hero.name} の攻撃！${enemy.name} に ${heroDamage} ダメージ！`;
-  req.session.logs.unshift(log); // ← 新しいログを先頭に
-
-  // 敵のHPが0以下 → 勝利
-  if (enemy.hp <= 0) {
-    req.session.defeatedEnemy = {
-      name: enemy.name,
-      maxHp: enemy.maxHp,
-      hp: enemy.hp, 
-      img: enemy.img
-    };
+  if (enemy.hp === 0) {
+    req.session.defeatedEnemy = { ...enemy };
     req.session.enemy = null;
-    req.session.log = log + ` ${enemy.name} を倒した！`;
+    req.session.log = `勇者 ${hero.name} の攻撃！${enemy.name} に ${heroDamage} ダメージ！ ${enemy.name} を倒した！`;
+    req.session.noEncounter = true;
     return res.redirect('/rpg/result');
   }
 
-  // 敵の反撃：2〜5ダメージ
   const enemyDamage = Math.floor(Math.random() * 4) + 3;
-  hero.hp -= enemyDamage;
+  hero.hp = Math.max(hero.hp - enemyDamage, 0);
+  console.log(`🛡️ 敵の反撃: ${enemyDamage} ダメージ (残HP: ${hero.hp})`);
 
-  log += ` ${enemy.name} の反撃！${hero.name} に ${enemyDamage} ダメージ！`;
-  req.session.logs.unshift(log); // ← 新しいログを先頭に
-
-if (hero.hp <= 0) {
-  req.session.enemy = null;
-  req.session.log = log + ` ${hero.name} は倒れてしまった…`;
-  return res.redirect('/rpg/dead');
-}
-
-  req.session.logs.push(log);
-  req.session.log = log;
-  res.redirect('/rpg/battle');
-
-});
-
-// GET /rpg/result（勝利画面）
-router.get('/result', (req, res) => {
-  const hero = req.session.hero;
-  const defeatedEnemy = req.session.defeatedEnemy;
-  req.session.hero.hp = Math.min(req.session.hero.hp + 10, 30);
-
-  if (!hero || !defeatedEnemy) {
-    return res.redirect('/rpg/start'); // 不正な遷移を防ぐ
+  if (hero.hp === 0) {
+    req.session.enemy = null;
+    req.session.log = `勇者 ${hero.name} の攻撃！${enemy.name} に ${heroDamage} ダメージ！ ${enemy.name} の反撃！${hero.name} に ${enemyDamage} ダメージ！ ${hero.name} は倒れてしまった…`;
+    req.session.hero.hp = 30;
+    req.session.noEncounter = true;
+    return req.session.save(err => {
+      if (err) return res.status(500).send('内部エラー');
+      res.redirect('/rpg/dead');
+    });
   }
 
-  res.render('rpg/result', {
-    hero,
-    enemy: defeatedEnemy
-  });
+  const log = `勇者 ${hero.name} の攻撃！${enemy.name} に ${heroDamage} ダメージ！ ${enemy.name} の反撃！${hero.name} に ${enemyDamage} ダメージ！`;
+  req.session.logs.unshift(log);
+  req.session.log = log;
+  res.redirect('/rpg/battle');
+});
+
+router.get('/result', (req, res) => {
+  const hero = req.session.hero;
+  const enemy = req.session.defeatedEnemy;
+  if (!hero || !enemy) return res.redirect('/rpg/start');
+  hero.hp = Math.min(hero.hp + 10, 30);
+  req.session.noEncounter = true;
+  console.log('🏆 勝利！noEncounter = true');
+  res.render('rpg/result', { hero, enemy });
 });
 
 router.get('/dead', (req, res) => {
-  res.render('rpg/dead', {
-    hero: req.session.hero
-  });
+  req.session.noEncounter = true;
+  console.log('💀 敗北... noEncounter = true');
+  res.render('rpg/dead', { hero: req.session.hero });
+});
+
+// ✅ 1歩だけエンカウント無効用
+router.get('/check-no-encounter', (req, res) => {
+  const skip = !!req.session.noEncounter;
+  console.log('🧪 /rpg/check-no-encounter →', skip);
+  req.session.noEncounter = false;
+  res.json({ noEncounter: skip });
 });
 
 module.exports = router;

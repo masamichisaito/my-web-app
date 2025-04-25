@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'PixelMplus10', sans-serif;
+  background-color: #d0ecff; /* 背景の外が白くならないように補完 */
+  background-image: url('/img/rpg/start-background.png');
+  background-repeat: no-repeat;
+  background-position: center 30%;
+  background-size: cover;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+.rpg-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* 勇者キャラ（背景上に重ねる） */
+.hero {
+  position: absolute;
+  bottom: 5px;        /* ギリギリまで下げて地面に立たせる */
+  left: 120px;        /* ← ここを80 → 120に変更して右へ移動 */
+  width: 220px;       /* 存在感あるサイズ */
+  opacity: 0;
+  animation: fadeInHero 2s ease-out 1s forwards;
+  z-index: 2;
+}
+
+@keyframes fadeInHero {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+
+.title {
+  margin-top: 80px;
+  font-size: 48px;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.input-container {
+  margin-top: 40px;
+}
+
+input[type="text"] {
+  font-size: 24px;
+  padding: 10px;
+  width: 300px;
+}
+
+.start-btn {
+  margin-top: 30px;
+  font-size: 28px;
+  padding: 10px 40px;
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  cursor: pointer;
+  animation: blink 1.5s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.4;
+  }
+}

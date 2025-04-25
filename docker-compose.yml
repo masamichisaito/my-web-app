@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules  # node_modules は除外してDocker側で管理
+    environment:
+      - NODE_ENV=development
+    command: npm run dev

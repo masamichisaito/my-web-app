@@ -1,48 +1,55 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+const rpgRoutes = require('./routes/rpg'); // ← ルーティングモジュール
 const app = express();
 
-const users = [];
-let userId = 1;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// セッションミドルウェアの設定
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // テスト環境では false に設定
+// 🗂️ 静的ファイル（.json, .tmj のMIME補正付き）
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.json') || filePath.endsWith('.tmj')) {
+      res.setHeader('Content-Type', 'application/json');
+    }
+  }
 }));
 
-app.post('/rpg/test/setup', (req, res) => {
-  const { monsterHP, heroHP } = req.body;
-  if (monsterHP !== undefined) {
-    req.session.monsterHP = monsterHP;
-  }
-  if (heroHP !== undefined) {
-    req.session.heroHP = heroHP;
-  }
-  res.status(200).send('Setup complete');
-});
+// 📦 ミドルウェア設定
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(session({
+  secret: 'your-secret-key', // 本番では環境変数で管理！
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // 本番では true + HTTPS
+}));
 
-
-// EJSでセッション使えるように
+// 🌍 セッションをテンプレート内で使う用
 app.use((req, res, next) => {
   res.locals.session = req.session;
   next();
 });
 
-// テンプレート設定
+// 🖼️ テンプレートエンジン
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// 静的ファイル
-app.use(express.static(path.join(__dirname, 'public')));
+// 🧩 RPGルート
+app.use('/rpg', rpgRoutes);
 
-// トップページ
+// 🧪 セッション状態注入用API（テスト用）
+app.post('/rpg/test/setup', (req, res) => {
+  const { monsterHP, heroHP } = req.body;
+  if (monsterHP !== undefined) req.session.monsterHP = monsterHP;
+  if (heroHP !== undefined) req.session.heroHP = heroHP;
+  res.status(200).send('Setup complete');
+});
+
+// 📋 ユーザーフォーム関連（確認用）
+const users = [];
+let userId = 1;
+
 app.get('/', (req, res) => {
   res.render('index', {
     title: 'ホームページ',
@@ -52,7 +59,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// 入力フォーム
 app.get('/form', (req, res) => {
   res.render('form', {
     title: 'ユーザー登録フォーム',
@@ -61,25 +67,20 @@ app.get('/form', (req, res) => {
   });
 });
 
-// ユーザー登録
 app.post('/users', (req, res) => {
   const { name, age } = req.body;
   const errors = [];
 
-  if (!name) {
-    errors.push('名前は必須です');
-  } else if (name.length > 255) {
-    errors.push('名前は255文字以内で入力してください');
-  } else if (/[^a-zA-Z0-9ぁ-んァ-ン一-龥ーａ-ｚＡ-Ｚ０-９]/.test(name)) {
+  if (!name) errors.push('名前は必須です');
+  else if (name.length > 255) errors.push('名前は255文字以内で入力してください');
+  else if (/[^a-zA-Z0-9ぁ-んァ-ン一-龥ーａ-ｚＡ-Ｚ０-９]/.test(name)) {
     errors.push('名前に無効な文字が含まれています');
   }
 
   const ageNumber = Number(age);
-  if (!age) {
-    errors.push('年齢は必須です');
-  } else if (isNaN(ageNumber)) {
-    errors.push('年齢は数字で入力してください');
-  } else if (!Number.isInteger(ageNumber) || ageNumber <= 0) {
+  if (!age) errors.push('年齢は必須です');
+  else if (isNaN(ageNumber)) errors.push('年齢は数字で入力してください');
+  else if (!Number.isInteger(ageNumber) || ageNumber <= 0) {
     errors.push('年齢は正の整数で入力してください');
   } else if (ageNumber > 120) {
     errors.push('年齢は適切な範囲で入力してください');
@@ -89,42 +90,27 @@ app.post('/users', (req, res) => {
     return res.status(400).send(errors.join('、'));
   }
 
-  users.push({
-    id: userId++,
-    name,
-    age: ageNumber
-  });
-
+  users.push({ id: userId++, name, age: ageNumber });
   res.redirect('/users');
 });
 
-// ユーザー一覧
 app.get('/users', (req, res) => {
   res.render('users', { users });
 });
 
-// ユーザー削除
 app.get('/users/:id/delete', (req, res) => {
   const userIdToDelete = parseInt(req.params.id, 10);
   const index = users.findIndex(user => user.id === userIdToDelete);
-
-  if (index === -1) {
-    console.log(`⚠️ ID ${userIdToDelete} のユーザーが見つかりませんでした`);
-  } else {
-    console.log(`🗑️ ID ${userIdToDelete} のユーザーを削除しました`);
+  if (index !== -1) {
     users.splice(index, 1);
+    console.log(`🗑️ ユーザーID ${userIdToDelete} を削除`);
   }
-
   res.redirect('/users');
 });
 
-// RPGルーティング読み込み
-const rpgRoutes = require('./routes/rpg');
-app.use('/rpg', rpgRoutes);
-
-const PORT = process.env.PORT || 3000;
+　　　　　　　// 🚀 起動
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
 
 module.exports = app;
