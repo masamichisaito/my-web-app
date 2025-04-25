@@ -9,16 +9,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: コードをチェックアウト
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Docker Compose でビルド
-        run: docker-compose build
+        run: docker compose build
 
-      - name: Dockerでユニットテスト（カバレッジ付き）
-        run: docker-compose run --rm web npm test -- --coverage
+      - name: Dockerでユニットテスト
+        run: docker compose run --rm web npm test
 
       # - name: サーバー起動（E2E用）
       #   run: docker-compose up -d
@@ -33,4 +31,4 @@ jobs:
       #   run: docker-compose run --rm web npm run coverage:report
 
       - name: ビルド後のクリーンアップ
-        run: docker-compose down --volumes --remove-orphans
+        run: docker compose down --volumes --remove-orphans
