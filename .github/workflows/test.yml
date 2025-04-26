@@ -1,34 +1,40 @@
-name: Docker CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
 
 jobs:
-  test:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
 
-      - name: Docker Compose でビルド
-        run: docker compose build
+      - name: Node.jsをセットアップ
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Dockerでユニットテスト
-        run: docker compose run --rm web npm test
+      - name: 依存パッケージインストール
+        run: npm install
 
-      # - name: サーバー起動（E2E用）
-      #   run: docker-compose up -d
+      - name: テスト実行
+        run: npm run test
 
-      # - name: サーバーが立ち上がるのを待つ（E2E用）
-      #   run: npx wait-on http://localhost:3000
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
 
-      # - name: E2Eテスト実行（必要なら）
-      #   run: docker-compose run --rm web npm run test:e2e
-
-      # - name: カバレッジレポート生成（任意）
-      #   run: docker-compose run --rm web npm run coverage:report
-
-      - name: ビルド後のクリーンアップ
-        run: docker compose down --volumes --remove-orphans
+    steps:
+      - name: Renderにデプロイする
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}

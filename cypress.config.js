@@ -2,10 +2,7 @@ const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
-      require('@cypress/code-coverage/task')(on, config);
-      return config;
-    },
-    baseUrl: 'http://localhost:3000', // 適切なURLに変更
-  },
+    baseUrl: process.env.CI ? 'http://web:3000' : 'http://localhost:3000',
+    supportFile: false
+  }
 });
