@@ -2,7 +2,7 @@
 
 describe('ユーザー登録フォームのテスト', () => {
   it('正しい情報で登録できること', () => {
-    cy.visit('http://localhost:3000');
+    cy.visit('/');
     cy.contains('名前と年齢を入力する').click(); 
     cy.get('input[name="name"]').type('太郎');
     cy.get('input[name="age"]').type('25');

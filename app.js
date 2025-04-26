@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const rpgRoutes = require('./routes/rpg'); // ← ルーティングモジュール
+const rpgRoutes = require('./routes/rpg'); // ← RPGだけに任せる
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -19,10 +19,10 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(session({
-  secret: 'your-secret-key', // 本番では環境変数で管理！
+  secret: 'your-secret-key', 
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // 本番では true + HTTPS
+  cookie: { secure: false }
 }));
 
 // 🌍 セッションをテンプレート内で使う用
@@ -31,22 +31,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🖼️ テンプレートエンジン
+// 🖼️ テンプレートエンジン設定
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// 🧩 RPGルート
+// 🧩 RPGルート（ここだけ！！）
 app.use('/rpg', rpgRoutes);
 
-// 🧪 セッション状態注入用API（テスト用）
-app.post('/rpg/test/setup', (req, res) => {
-  const { monsterHP, heroHP } = req.body;
-  if (monsterHP !== undefined) req.session.monsterHP = monsterHP;
-  if (heroHP !== undefined) req.session.heroHP = heroHP;
-  res.status(200).send('Setup complete');
-});
-
-// 📋 ユーザーフォーム関連（確認用）
+// 📋 ユーザーフォーム機能
 const users = [];
 let userId = 1;
 
@@ -108,7 +100,7 @@ app.get('/users/:id/delete', (req, res) => {
   res.redirect('/users');
 });
 
-　　　　　　　// 🚀 起動
+// 🚀 起動
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });

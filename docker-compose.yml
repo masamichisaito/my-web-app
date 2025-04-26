@@ -1,13 +1,27 @@
-version: '3.8'
+version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.web
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules  # node_modules は除外してDocker側で管理
+    networks:
+      - default
+
+  e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile.e2e
+    depends_on:
+      - web
+    networks:
+      - default
     environment:
-      - NODE_ENV=development
-    command: npm run dev
+      - CYPRESS_baseUrl=http://web:3000   # ←これ！！！超重要！！！！
+    entrypoint: ["npx", "cypress", "run", "--config", "baseUrl=http://web:3000"]
+
+networks:
+  default:
+    driver: bridge
