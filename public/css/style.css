@@ -107,20 +107,33 @@ li:hover {
   box-shadow: 0 6px 12px rgba(0,0,0,0.12);
 }
 
-a.delete-link {
-  color: #dc3545;
-  text-decoration: none;
-  font-weight: bold;
-  border: 1px solid #dc3545;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.85em;
-  transition: background-color 0.2s, color 0.2s;
+.action-buttons {
+  display: flex;
+  justify-content: flex-start; /* 左寄せにする */
+  align-items: center;
+  gap: 10px; /* ボタン間の間隔を設定 */
 }
 
-a.delete-link:hover {
-  background-color: #dc3545;
-  color: white;
+.action-button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.edit-button {
+  background-color: #3498db; /* 青色 */
+}
+
+.delete-button {
+  background-color: #e74c3c; /* 赤色 */
+}
+
+.delete-button button:hover {
+  background-color: #c0392b; /* ホバー時の濃い赤色 */
 }
 
 /* アニメーションのキーフレーム */
@@ -133,6 +146,72 @@ a.delete-link:hover {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 編集フォームのスタイル */
+.edit-form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1.5em;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 1em;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ボタンの配置とスタイル */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5em;
+}
+
+a.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0.5em 1em;
+  font-size: 1.1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.btn-secondary {
+  background-color: #ccc;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #b3b3b3;
 }
 
 /* アニメーションを適用するク

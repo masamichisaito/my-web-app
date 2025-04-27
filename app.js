@@ -90,6 +90,42 @@ app.get('/users/:id/delete', (req, res) => {
   res.redirect('/users');
 });
 
+app.get('/users/:id/edit', (req, res) => {
+  const userIdToEdit = parseInt(req.params.id, 10);
+  const user = users.find(u => u.id === userIdToEdit);
+
+  if (!user) {
+    return res.status(404).send('ユーザーが見つかりません');
+  }
+
+  res.render('edit', { user });
+});
+
+app.post('/users/:id/edit', (req, res) => {
+  const userIdToEdit = parseInt(req.params.id, 10);
+  const { name, age } = req.body;
+  const user = users.find(u => u.id === userIdToEdit);
+
+  if (!user) {
+    return res.status(404).send('ユーザーが見つかりません');
+  }
+
+  // 簡単にバリデーション（必要なら今の登録と同じエラーチェック追加してもOK）
+  const ageNumber = Number(age);
+  if (!name || !age || isNaN(ageNumber)) {
+    return res.status(400).send('名前と年齢を正しく入力してください');
+  }
+
+  user.name = name;
+  user.age = ageNumber;
+  res.redirect('/users');
+});
+
+app.post('/users/:id/edit', (req, res) => {
+  console.log('編集リクエスト受信:', req.body); // ←これ追加！
+  // あとはそのまま
+});
+
 // 🚀 起動
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
