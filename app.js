@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const rpgRoutes = require('./routes/rpg'); // ← RPGだけに任せる
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -25,18 +24,9 @@ app.use(session({
   cookie: { secure: false }
 }));
 
-// 🌍 セッションをテンプレート内で使う用
-app.use((req, res, next) => {
-  res.locals.session = req.session;
-  next();
-});
-
 // 🖼️ テンプレートエンジン設定
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// 🧩 RPGルート（ここだけ！！）
-app.use('/rpg', rpgRoutes);
 
 // 📋 ユーザーフォーム機能
 const users = [];

@@ -11,7 +11,7 @@ on:
       - develop
 
 jobs:
-  build-and-test:
+  build-test-e2e:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,18 +23,26 @@ jobs:
         with:
           node-version: '18'
 
-      - name: 依存パッケージインストール
+      - name: 依存パッケージをインストール
         run: npm install
 
-      - name: テスト実行
+      - name: 単体テスト（Jest）実行
         run: npm run test
 
-  deploy:
-    needs: build-and-test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
+      - name: Dockerをセットアップ
+        uses: docker/setup-buildx-action@v3
 
-    steps:
-      - name: Renderにデプロイする
-        run: |
-          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      - name: docker-composeでwebサービスをビルド＆起動
+        run: docker compose up -d web
+
+      - name: E2Eテスト（Cypress）実行
+        run: docker compose run --rm e2e
+
+  # deploy:
+  #   needs: build-and-test
+  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Renderにデプロイする
+  #       run: |
+  #         curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
