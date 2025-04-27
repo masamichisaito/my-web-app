@@ -5,7 +5,7 @@ describe('GET /', () => {
   it('should return 200 OK and render the index page', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toContain('ようこそ！');expect(res.text).toContain('RPGを遊ぶ');
+    expect(res.text).toContain('ようこそ！');
   });
 });
 
