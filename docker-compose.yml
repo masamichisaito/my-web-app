@@ -19,8 +19,16 @@ services:
     networks:
       - default
     environment:
-      - CYPRESS_baseUrl=http://web:3000   # ←これ！！！超重要！！！！
+      - CYPRESS_baseUrl=http://web:3000
     entrypoint: ["npx", "cypress", "run", "--config", "baseUrl=http://web:3000"]
+
+  unit:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    networks:
+      - default
+    entrypoint: ["npm", "test"]
 
 networks:
   default:
