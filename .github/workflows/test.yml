@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -16,34 +16,39 @@ jobs:
 
     steps:
       - name: リポジトリをチェックアウト
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Node.jsをセットアップ
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: 依存パッケージをインストール
+      - name: 依存関係をインストール
         run: npm install
 
-      - name: 単体テスト（Jest）実行
+      - name: 単体テスト・統合テストを実行
         run: npm run test
 
-      - name: Docker Buildx をセットアップ
-        uses: docker/setup-buildx-action@v3
+      - name: E2Eテストを実行
+        run: npm run test:e2e
 
-      - name: docker-composeでWebサービスをビルド＆起動
-        run: docker compose up -d web
+      - name: ビルド（必要なら）
+        run: npm run build
 
-      - name: E2Eテスト（Cypress）実行
-        run: docker compose run --rm e2e
+  deploy-production:
+    needs: build-test-e2e
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Renderに本番デプロイ
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
-  # ↓ デプロイは将来必要になったとき有効化する
-  # deploy:
-  #   needs: build-test-e2e
-  #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Renderにデプロイする
-  #       run: |
-  #         curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+#  deploy-staging:
+#    needs: build-test-e2e
+#    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Renderにステージングデプロイ
+#        run: |
+#          curl -X POST ${{ secrets.RENDER_STG_DEPLOY_HOOK_URL }}
