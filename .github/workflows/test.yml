@@ -1,4 +1,4 @@
-name: CI
+name: CI with Docker Compose
 
 on:
   push:
@@ -18,27 +18,14 @@ jobs:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
 
-      - name: Node.jsをセットアップ
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
-      - name: 依存関係をインストール
-        run: npm install
-
-      - name: wait-onをインストール
-        run: npm install -g wait-on
-
-      - name: サーバーをバックグラウンドで起動して待機
+      - name: Docker Composeをインストール
         run: |
-          npm start &
-          wait-on http://localhost:3000
+          sudo apt-get update
+          sudo apt-get install docker-compose -y
 
-      - name: 単体テスト・統合テストを実行
-        run: npm run test
-
-      - name: E2Eテストを実行
-        run: npm run test:e2e
+      - name: docker-compose upしてテスト実行
+        run: |
+          docker-compose up --abort-on-container-exit --exit-code-from unit
 
   deploy-production:
     needs: build-test-e2e
@@ -49,11 +36,11 @@ jobs:
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
-#  deploy-staging:
-#    needs: build-test-e2e
-#    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Renderにステージングデプロイ
-#        run: |
-#          curl -X POST ${{ secrets.RENDER_STG_DEPLOY_HOOK_URL }}
+# deploy-staging:
+#   needs: build-test-e2e
+#   if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+#   runs-on: ubuntu-latest
+#   steps:
+#     - name: Renderにステージングデプロイ
+#       run: |
+#         curl -X POST ${{ secrets.RENDER_STG_DEPLOY_HOOK_URL }}

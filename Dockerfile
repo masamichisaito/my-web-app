@@ -1,17 +1,20 @@
-# Node.js の公式イメージを使用
+# ベースイメージ
 FROM node:18
 
-# 作業ディレクトリを作成
+# 作業ディレクトリ作成
 WORKDIR /app
 
-# 依存関係ファイルを先にコピー
+# package.json と package-lock.json をコピー
 COPY package*.json ./
 
-# 依存パッケージをインストール
+# 依存関係をインストール
 RUN npm install
 
-# アプリ本体をコピー
+# ソースコードをコピー
 COPY . .
 
-# アプリ起動コマンド
+# サーバーを起動（本番用じゃないのでnpm start）
 CMD ["npm", "start"]
+
+# 外部に公開するポート（Expressアプリがlistenしてるポート）
+EXPOSE 3000
