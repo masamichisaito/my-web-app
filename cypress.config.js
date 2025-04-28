@@ -2,7 +2,7 @@ const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   e2e: {
-    baseUrl: process.env.CI ? 'http://web:3000' : 'http://localhost:3000',
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3000',
     reporter: 'mochawesome',
     reporterOptions: {
       reportDir: 'cypress/reports/mochawesome',
