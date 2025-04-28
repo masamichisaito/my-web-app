@@ -40,9 +40,6 @@ jobs:
       - name: E2Eテストを実行
         run: npm run test:e2e
 
-      - name: ビルド（必要なら）
-        run: npm run build
-
   deploy-production:
     needs: build-test-e2e
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -51,7 +48,7 @@ jobs:
       - name: Renderに本番デプロイ
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-          
+
 #  deploy-staging:
 #    needs: build-test-e2e
 #    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
