@@ -1,0 +1,475 @@
+<html><head><meta charset="utf-8"/><title>テスト結果レポート</title><style type="text/css">:root {
+  --text-primary: #111;
+  --text-secondary: #4f4f4f;
+  --success: #006633;
+  --success-bright: #80ffbf;
+  --danger: #cc071e;
+  --danger-bright: #fbdfe0;
+  --warning: #995c00;
+  --warning-bright: #ffeea8;
+  --panel: #eee;
+  --border: #949494;
+  --disabled: #6b6b6b;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+}
+body {
+  padding: 2rem 1rem;
+}
+.jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+#metadata-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.additional-information-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/** SUMMARY */
+#summary {
+  color: var(--text-primary);
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 0.5rem;
+  background: var(--panel);
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: var(--success);
+  border-left: 0.4rem solid var(--success);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: var(--danger);
+  border-left: 0.4rem solid var(--danger);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-pending {
+  color: var(--warning);
+  border-left: 0.4rem solid var(--warning);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-empty {
+  color: var(--disabled);
+  border-left: 0.4rem solid var(--disabled);
+  margin-bottom: 0.15rem;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: var(--success-bright);
+  color: var(--success);
+}
+.test-result.failed {
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.test-result.pending {
+  background-color: var(--warning-bright);
+  color: var(--warning);
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--danger);
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 1rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: var(--panel);
+  color: var(--text-secondary);
+  border: 0.15rem solid;
+  border-color: var(--panel);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info:hover {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 1rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85rem;
+}
+.suite-info .suite-time.warn {
+  background-color: var(--danger);
+  color: #fff;
+}
+.suite-info:before {
+  content: "\2303";
+  display: inline-block;
+  margin-right: 1rem;
+  transform: rotate(180deg) translateY(0.15rem);
+}
+.suite-container[open] .suite-info:before {
+  transform: rotate(0deg) translateY(0.15rem);
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--panel);
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">テスト結果レポート</h1></header><section id="metadata-container"><div id="timestamp">Started: 2025-04-28 09:20:10</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (4)</div><div class="summary-passed ">4 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (27)</div><div class="summary-passed ">27 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">/Users/saitoumasamichi/my-webapp/tests/app.test.js</div><div class="suite-time">0.323s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">GET /</div><div class="test-title">should return 200 OK and render the index page</div><div class="test-status">passed</div><div class="test-duration">0.023s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">should redirect to /users when valid data is sent</div><div class="test-status">passed</div><div class="test-duration">0.008s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">should return 400 if name is missing</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">should return 400 if age is not a number</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">名前が空の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">年齢が負の数の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">年齢が非数値文字列の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">名前に特殊文字を含む場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">年齢が小数の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">年齢が非常に大きな数の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users &gt; POST /users バリデーションテスト</div><div class="test-title">名前が非常に長い文字列の場合、400エラーを返す</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">ユーザー名が空文字の場合、falseを返す</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">ユーザー名が255文字以内の場合、trueを返す</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">POST /users</div><div class="test-title">ユーザー名が256文字の場合、falseを返す</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div></div><div class="suite-consolelog"><div class="suite-consolelog-header">Console Log</div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at Console.log (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/transports/console.js:87:23)
+    at Console._write (/Users/saitoumasamichi/my-webapp/node_modules/winston-transport/modern.js:103:17)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at Console.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.ondata (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:629:20)
+    at DerivedLogger.emit (node:events:519:35)
+    at addChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:279:12)
+    at readableAddChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:262:11)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Readable.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:228:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:132:32)
+    at DerivedLogger._transform (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/logger.js:314:12)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._read (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:166:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:155:83)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.&lt;computed&gt; [as info] (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/create-logger.js:81:14)
+    at Server.info (/Users/saitoumasamichi/my-webapp/app.js:53:10)
+    at Server.f (/Users/saitoumasamichi/my-webapp/node_modules/once/once.js:25:25)
+    at Object.onceWrapper (node:events:622:26)
+    at Server.emit (node:events:507:28)
+    at emitErrorNT (node:net:1975:8)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</pre><pre class="suite-consolelog-item-message">[2025-04-28 09:20:10] info: ✅ Server running at http://localhost:3000
+</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:10.988Z] GET / from ::ffff:127.0.0.1 -&gt; 200 (6ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.001Z] POST /users from ::ffff:127.0.0.1 -&gt; 302 (5ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.003Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (0ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.005Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.007Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.008Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (0ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.010Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.011Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (0ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.013Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (0ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.016Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.017Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (0ms)</pre></div></div></details><details id="suite-2" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">/Users/saitoumasamichi/my-webapp/tests/users.test.js</div><div class="suite-time">0.056s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; トップページアクセス</div><div class="test-title">200 OKで表示され、"ようこそ！"が含まれる</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 正常系</div><div class="test-title">正しいデータなら /users にリダイレクトする</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="" age="25" → "名前は必須です"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="太郎" age="-1" → "年齢は正の整数で入力してください"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="太郎" age="二十" → "年齢は数字で入力してください"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="&lt;script&gt;" age="25" → "名前に無効な文字が含まれています"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="太郎" age="25.5" → "年齢は正の整数で入力してください"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="太郎" age="1000" → "年齢は適切な範囲で入力してください"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー機能テスト &gt; ユーザー登録 &gt; 異常系（バリデーションエラー）</div><div class="test-title">無効データ name="ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ" age="25" → "名前は255文字以内で入力してください"</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div><div class="suite-consolelog"><div class="suite-consolelog-header">Console Log</div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at Console.log (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/transports/console.js:87:23)
+    at Console._write (/Users/saitoumasamichi/my-webapp/node_modules/winston-transport/modern.js:103:17)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at Console.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.ondata (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:629:20)
+    at DerivedLogger.emit (node:events:519:35)
+    at addChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:279:12)
+    at readableAddChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:262:11)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Readable.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:228:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:132:32)
+    at DerivedLogger._transform (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/logger.js:314:12)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._read (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:166:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:155:83)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.&lt;computed&gt; [as info] (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/create-logger.js:81:14)
+    at Server.info (/Users/saitoumasamichi/my-webapp/app.js:53:10)
+    at Server.f (/Users/saitoumasamichi/my-webapp/node_modules/once/once.js:25:25)
+    at Object.onceWrapper (node:events:622:26)
+    at Server.emit (node:events:507:28)
+    at emitErrorNT (node:net:1975:8)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</pre><pre class="suite-consolelog-item-message">[2025-04-28 09:20:11] info: ✅ Server running at http://localhost:3000
+</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.077Z] GET / from ::ffff:127.0.0.1 -&gt; 200 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.079Z] POST /users from ::ffff:127.0.0.1 -&gt; 302 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.081Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.082Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.083Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.084Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.085Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.086Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.087Z] POST /users from ::ffff:127.0.0.1 -&gt; 400 (1ms)</pre></div></div></details><details id="suite-3" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">/Users/saitoumasamichi/my-webapp/tests/server.test.js</div><div class="suite-time">0.04s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">Server Initialization</div><div class="test-title">should respond to GET / with status 200</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div></div><div class="suite-consolelog"><div class="suite-consolelog-header">Console Log</div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at Console.log (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/transports/console.js:87:23)
+    at Console._write (/Users/saitoumasamichi/my-webapp/node_modules/winston-transport/modern.js:103:17)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at Console.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.ondata (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:629:20)
+    at DerivedLogger.emit (node:events:519:35)
+    at addChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:279:12)
+    at readableAddChunk (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:262:11)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Readable.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_readable.js:228:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform.push (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:132:32)
+    at DerivedLogger._transform (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/logger.js:314:12)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._read (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:166:10)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Transform._write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_transform.js:155:83)
+    at doWrite (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:390:139)
+    at writeOrBuffer (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:381:5)
+    at DerivedLogger.Object.&lt;anonymous&gt;.Writable.write (/Users/saitoumasamichi/my-webapp/node_modules/readable-stream/lib/_stream_writable.js:302:11)
+    at DerivedLogger.&lt;computed&gt; [as info] (/Users/saitoumasamichi/my-webapp/node_modules/winston/lib/winston/create-logger.js:81:14)
+    at Server.info (/Users/saitoumasamichi/my-webapp/app.js:53:10)
+    at Server.f (/Users/saitoumasamichi/my-webapp/node_modules/once/once.js:25:25)
+    at Object.onceWrapper (node:events:622:26)
+    at Server.emit (node:events:507:28)
+    at emitErrorNT (node:net:1975:8)
+    at processTicksAndRejections (node:internal/process/task_queues:90:21)</pre><pre class="suite-consolelog-item-message">[2025-04-28 09:20:11] info: ✅ Server running at http://localhost:3000
+</pre></div><div class="suite-consolelog-item"><pre class="suite-consolelog-item-origin">    at ServerResponse.log (/Users/saitoumasamichi/my-webapp/middlewares/requestLogger.js:26:13)
+    at ServerResponse.emit (node:events:519:35)
+    at onFinish (node:_http_outgoing:1081:10)
+    at callback (node:internal/streams/writable:764:21)
+    at afterWrite (node:internal/streams/writable:708:5)
+    at afterWriteTick (node:internal/streams/writable:694:10)
+    at processTicksAndRejections (node:internal/process/task_queues:89:21)</pre><pre class="suite-consolelog-item-message">🟢 [INFO] [2025-04-28T00:20:11.131Z] GET / from ::ffff:127.0.0.1 -&gt; 200 (1ms)</pre></div></div></details><details id="suite-4" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">/Users/saitoumasamichi/my-webapp/tests/validators.test.js</div><div class="suite-time">0.013s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー名バリデーション関数</div><div class="test-title">空文字列は無効と判定される</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー名バリデーション関数</div><div class="test-title">255文字以内なら有効と判定される</div><div class="test-status">passed</div><div class="test-duration"> </div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename">ユーザー名バリデーション関数</div><div class="test-title">256文字以上は無効と判定される</div><div class="test-status">passed</div><div class="test-duration">0.001s</div></div></div></div></details></main></body></html>
