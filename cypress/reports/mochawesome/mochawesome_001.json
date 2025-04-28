@@ -1,0 +1,183 @@
+{
+  "stats": {
+    "suites": 3,
+    "tests": 3,
+    "passes": 3,
+    "pending": 0,
+    "failures": 0,
+    "start": "2025-04-27T20:57:06.340Z",
+    "end": "2025-04-27T20:57:10.008Z",
+    "duration": 3668,
+    "testsRegistered": 3,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "36575e6a-72a3-47a0-93ef-a67cb23a33f7",
+      "title": "",
+      "fullFile": "cypress/e2e/home.cy.js",
+      "file": "cypress/e2e/home.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "733d5398-ced3-4045-bbef-6bb3a22db5e8",
+          "title": "ユーザー登録フォームのテスト",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "正しい情報で登録できること",
+              "fullTitle": "ユーザー登録フォームのテスト 正しい情報で登録できること",
+              "timedOut": null,
+              "duration": 1371,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('/');\ncy.contains('名前と年齢を入力する').click();\ncy.get('input[name=\"name\"]').type('太郎');\ncy.get('input[name=\"age\"]').type('25');\ncy.get('form').submit();\ncy.url().should('include', '/users');",
+              "err": {},
+              "uuid": "2fb52ef5-2b78-491a-b7a6-b3c80b1c8055",
+              "parentUUID": "733d5398-ced3-4045-bbef-6bb3a22db5e8",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "2fb52ef5-2b78-491a-b7a6-b3c80b1c8055"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1371,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "9d02979d-370f-42d1-85ec-f9d5efe641a6",
+          "title": "ユーザー削除のテスト",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "登録したユーザーを削除できること",
+              "fullTitle": "ユーザー削除のテスト 登録したユーザーを削除できること",
+              "timedOut": null,
+              "duration": 1102,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('/');\ncy.contains('名前と年齢を入力する').click();\ncy.get('input[name=\"name\"]').type('削除テスト');\ncy.get('input[name=\"age\"]').type('30');\ncy.get('form').submit();\ncy.url().should('include', '/users');\ncy.contains('削除テスト').should('exist');\ncy.contains('削除テスト').parent().find('a:contains(\"削除\")').click();\ncy.on('window:confirm', () => true); // confirmをOKする\ncy.url().should('include', '/users');\n// ここが超大事！！！リスト全体の再ロードを待つ\ncy.get('ul').should('exist'); // リスト存在確認\ncy.wait(500); // レンダリング待ち\ncy.contains('削除テスト').should('not.exist'); // ここで再確認！",
+              "err": {},
+              "uuid": "abdb7248-40ff-4447-b3f6-1278ad70a68d",
+              "parentUUID": "9d02979d-370f-42d1-85ec-f9d5efe641a6",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "abdb7248-40ff-4447-b3f6-1278ad70a68d"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1102,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "f2f463aa-1cb5-4271-904a-35cec3f6cd5d",
+          "title": "ユーザー編集のテスト",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "登録したユーザーを編集できること",
+              "fullTitle": "ユーザー編集のテスト 登録したユーザーを編集できること",
+              "timedOut": null,
+              "duration": 1116,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('/');\ncy.contains('名前と年齢を入力する').click();\ncy.get('input[name=\"name\"]').type('編集前');\ncy.get('input[name=\"age\"]').type('22');\ncy.get('form').submit();\ncy.url().should('include', '/users');\ncy.contains('編集前').should('exist');\ncy.contains('編集前').parent().find('a:contains(\"編集\")').click();\ncy.get('form').should('exist');\ncy.get('input[name=\"name\"]').clear().type('編集後').should('have.value', '編集後');\ncy.get('input[name=\"age\"]').clear().type('23').should('have.value', '23');\ncy.get('form').submit();\n// ★ URLリダイレクトだけまず確認\ncy.url().should('include', '/users');\n// ★ さらにリストじゃなく、直接「編集後」が出現するか待つ\ncy.contains('編集後', {\n  timeout: 5000\n}).should('exist');\ncy.contains('23歳').should('exist');",
+              "err": {},
+              "uuid": "4605f702-d450-479a-b005-e5c50235e317",
+              "parentUUID": "f2f463aa-1cb5-4271-904a-35cec3f6cd5d",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "4605f702-d450-479a-b005-e5c50235e317"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 1116,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/reports/mochawesome",
+        "overwrite": false,
+        "html": true,
+        "json": true
+      },
+      "version": "6.2.0"
+    }
+  }
+}
