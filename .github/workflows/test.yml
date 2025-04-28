@@ -26,13 +26,16 @@ jobs:
       - name: 依存関係をインストール
         run: npm install
 
-      - name: 単体テスト・統合テストを実行
-        run: npm run test
+      - name: wait-onをインストール
+        run: npm install -g wait-on
 
-      - name: サーバーをバックグラウンドで起動
+      - name: サーバーをバックグラウンドで起動して待機
         run: |
           npm start &
-          sleep 10
+          wait-on http://localhost:3000
+
+      - name: 単体テスト・統合テストを実行
+        run: npm run test
 
       - name: E2Eテストを実行
         run: npm run test:e2e
@@ -48,7 +51,7 @@ jobs:
       - name: Renderに本番デプロイ
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-
+          
 #  deploy-staging:
 #    needs: build-test-e2e
 #    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
