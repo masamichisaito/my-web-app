@@ -1,14 +1,22 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     networks:
-      - default
+      - app-net
+
+  unit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - app-net
+    entrypoint: ["npm", "test"]
 
   e2e:
     build:
@@ -17,19 +25,12 @@ services:
     depends_on:
       - web
     networks:
-      - default
+      - app-net
     environment:
       - CYPRESS_baseUrl=http://web:3000
     entrypoint: ["npx", "cypress", "run", "--config", "baseUrl=http://web:3000"]
 
-  unit:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-    networks:
-      - default
-    entrypoint: ["npm", "test"]
-
 networks:
-  default:
+  app-net:
     driver: bridge
+

@@ -1,20 +1,18 @@
-# ベースイメージ
-FROM node:18
+# Node.jsのAlpine版公式イメージを使う
+FROM node:18-alpine
 
-# 作業ディレクトリ作成
 WORKDIR /app
 
-# package.json と package-lock.json をコピー
+# 依存だけインストールする
 COPY package*.json ./
-
-# 依存関係をインストール
 RUN npm install
 
-# ソースコードをコピー
+# アプリケーション本体をコピー
 COPY . .
 
-# サーバーを起動（本番用じゃないのでnpm start）
-CMD ["npm", "start"]
+# ローカルnode_modulesを消してからbuildする場合はこれもあり
+# RUN rm -rf node_modules && npm install --production
 
-# 外部に公開するポート（Expressアプリがlistenしてるポート）
 EXPOSE 3000
+
+CMD ["npm", "start"]

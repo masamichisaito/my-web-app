@@ -1,6 +1,5 @@
 # Dockerfile
 FROM cypress/included:14.3.1
-
 WORKDIR /app
 COPY . .
 RUN npm install

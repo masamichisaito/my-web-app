@@ -1,4 +1,4 @@
-name: CI with Docker Compose
+name: CI
 
 on:
   push:
@@ -11,24 +11,28 @@ on:
       - develop
 
 jobs:
-  build-test-e2e:
+  docker-compose-ci:
     runs-on: ubuntu-latest
 
     steps:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
 
-      - name: Docker Composeをインストール
+      - name: Docker Composeビルド＆テスト
         run: |
-          sudo apt-get update
-          sudo apt-get install docker-compose -y
-
-      - name: docker-compose upしてテスト実行
-        run: |
+          docker-compose build
           docker-compose up --abort-on-container-exit --exit-code-from unit
 
+      - name: Dockerログイン＆Push（GitHub Packages）
+        env:
+          CR_PAT: ${{ secrets.CR_PAT }}
+        run: |
+          echo $CR_PAT | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker tag my-webapp_web ghcr.io/${{ github.repository }}:latest
+          docker push ghcr.io/${{ github.repository }}:latest
+
   deploy-production:
-    needs: build-test-e2e
+    needs: docker-compose-ci
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
