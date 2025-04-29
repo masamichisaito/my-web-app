@@ -1,5 +1,7 @@
 name: CI
 
+name: CI
+
 on:
   push:
     branches:
@@ -18,14 +20,9 @@ jobs:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
 
-      - name: Docker Composeインストール
-        run: |
-          sudo apt-get update
-          sudo apt-get install docker-compose-plugin
-
       - name: Docker Composeビルド＆テスト
         run: |
-          docker compose version  # ←確認用（なくてもいい）
+          docker compose version
           docker compose build
           docker compose up --abort-on-container-exit --exit-code-from unit
 
@@ -45,7 +42,7 @@ jobs:
       - name: Renderに本番デプロイ
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-
+          
 # deploy-staging:
 #   needs: build-test-e2e
 #   if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
